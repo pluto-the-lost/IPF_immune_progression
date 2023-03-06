@@ -1,0 +1,21 @@
+require(Seurat)
+require(dplyr)
+require(Matrix)
+require(magrittr)
+library(scales)
+library(ggplot2)
+library(configr)
+library(cowplot)
+library(Hmisc)
+library(RColorBrewer)
+rds<-readRDS('/annoroad/data1/bioinfo/PROJECT/big_Commercial/Cooperation/B_TET/B_TET-072/supplement/yaojiaying/AN202202140002/Analysis/Analysis/Figs/zhaoyue/Fig3D/AM.rds')
+rds@meta.data$cell_type<-plyr::mapvalues(x=rds@meta.data$cell_type,from =as.vector(c(0,1,2,3,4,5,6)),to=as.vector(c('Fabp5+Gpnmd+','Lung resident Ams','CCL17-producing','Nr4a1+','Fabp1-Car4-Krt79+Cidec+','Fabp1+Car4+Krt79+Cidec+','Isg15+Ly6e+')))
+saveRDS(rds,'/annoroad/data1/bioinfo/PROJECT/big_Commercial/Cooperation/B_TET/TET_PUBLIC/zhaoyue/project/B_TET_074/Figure4/AM.anno.rds')
+rds<-readRDS('AM.anno.rds')
+grid.col<-colorRampPalette(brewer.pal(9, "Set3"))(7)[1:7]
+DefaultAssay(object = rds) <- "RNA"
+#Idents(rds)<-rds@meta.data$cell_type
+DimPlot(rds, reduction = "umap", group.by = "cell_type",pt.size=2,cols=grid.col,raster=TRUE)
+ggsave('AM_dimplot.pdf', dpi=900,width=6, height=4, units="in")
+DimPlot(rds, reduction = "umap", group.by = "cell_type",split.by='sampleID',pt.size =2,cols=grid.col,raster=TRUE,ncol=2)
+ggsave('AM_dimplot_group.pdf', dpi=900,width=10, height=8, units="in")
